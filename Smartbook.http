@@ -1,0 +1,254 @@
+### SmartBook API - HTTP Requests
+### Para usar con Swagger UI, ejecuta la aplicación y accede a: http://localhost:5235/swagger
+### 
+### ============================================
+### INSTRUCCIONES PARA USAR EL TOKEN JWT
+### ============================================
+### 
+### OPCIÓN 1: Usar Swagger UI (Recomendado)
+### 1. Ejecuta la aplicación (F5 en Visual Studio)
+### 2. Abre Swagger en: http://localhost:5235/swagger
+### 3. Haz clic en el botón "Authorize" 🔓 (arriba a la derecha)
+### 4. Usa el endpoint POST /api/usuarios/login para obtener un token
+### 5. Copia el token de la respuesta (solo el token, sin "Bearer")
+### 6. Pega el token en el campo del diálogo "Authorize"
+### 7. Haz clic en "Authorize" y luego "Close"
+### 8. Ahora todos los endpoints protegidos usarán automáticamente tu token
+### 
+### OPCIÓN 2: Usar este archivo HTTP
+### 1. Ejecuta el endpoint de login (línea 19)
+### 2. Copia el token de la respuesta
+### 3. Reemplaza {{Token}} en la línea 12 con tu token
+### 4. Ahora puedes ejecutar todos los demás endpoints
+### 
+### CREDENCIALES POR DEFECTO:
+### Email: admin@cecar.edu.co
+### Contraseña: AdminCDI123!
+### 
+### NOTA: El token expira en 1 hora. Deberás volver a hacer login para obtener uno nuevo.
+
+@Smartbook_HostAddress = http://localhost:5235
+@Token = TU_TOKEN_AQUI 
+
+### ============================================
+### AUTENTICACIÓN (No requiere token)
+### ============================================
+
+### Login - Obtener Token JWT
+POST {{Smartbook_HostAddress}}/api/usuarios/login
+Content-Type: application/json
+
+{
+  "email": "admin@cecar.edu.co",
+  "contrasena": "AdminCDI123!"
+}
+
+### Confirmar Email
+GET {{Smartbook_HostAddress}}/api/usuarios/confirmar-email?token=TOKEN_AQUI
+
+### Solicitar Reset Password
+POST {{Smartbook_HostAddress}}/api/usuarios/reset-password
+Content-Type: application/json
+
+{
+  "email": "admin@cecar.edu.co"
+}
+
+### Confirmar Reset Password
+POST {{Smartbook_HostAddress}}/api/usuarios/confirmar-reset-password
+Content-Type: application/json
+
+{
+  "token": "TOKEN_AQUI",
+  "nuevaContrasena": "NuevaPassword123!"
+}
+
+### ============================================
+### USUARIOS (Requiere: Admin)
+### ============================================
+
+### Crear Usuario
+POST {{Smartbook_HostAddress}}/api/usuarios
+Authorization: Bearer {{Token}}
+Content-Type: application/json
+
+{
+  "identificacion": "9876543210",
+  "contrasena": "Password123!",
+  "nombres": "Usuario Test",
+  "email": "test@cecar.edu.co",
+  "rol": 2
+}
+
+### Obtener Usuario por ID
+GET {{Smartbook_HostAddress}}/api/usuarios/1
+Authorization: Bearer {{Token}}
+
+### Buscar Usuarios
+GET {{Smartbook_HostAddress}}/api/usuarios?nombres=Admin
+Authorization: Bearer {{Token}}
+
+### Actualizar Usuario
+PUT {{Smartbook_HostAddress}}/api/usuarios/1
+Authorization: Bearer {{Token}}
+Content-Type: application/json
+
+{
+  "nombres": "Usuario Actualizado",
+  "email": "updated@cecar.edu.co",
+  "rol": 2,
+  "activo": true
+}
+
+### ============================================
+### CLIENTES (Requiere: Autenticación)
+### ============================================
+
+### Crear Cliente
+POST {{Smartbook_HostAddress}}/api/clientes
+Authorization: Bearer {{Token}}
+Content-Type: application/json
+
+{
+  "identificacion": "1234567890",
+  "nombres": "Cliente Test",
+  "email": "cliente@test.com",
+  "celular": "3001234567",
+  "fechaNacimiento": "1990-01-01"
+}
+
+### Obtener Cliente por Identificación
+GET {{Smartbook_HostAddress}}/api/clientes/1234567890
+Authorization: Bearer {{Token}}
+
+### Buscar Clientes
+GET {{Smartbook_HostAddress}}/api/clientes?nombres=Test
+Authorization: Bearer {{Token}}
+
+### Actualizar Cliente
+PUT {{Smartbook_HostAddress}}/api/clientes/1234567890
+Authorization: Bearer {{Token}}
+Content-Type: application/json
+
+{
+  "nombres": "Cliente Actualizado",
+  "email": "updated@test.com",
+  "celular": "3001234567",
+  "fechaNacimiento": "1990-01-01"
+}
+
+### ============================================
+### LIBROS (Requiere: Autenticación)
+### ============================================
+
+### Crear Libro (Requiere: Admin)
+POST {{Smartbook_HostAddress}}/api/libros
+Authorization: Bearer {{Token}}
+Content-Type: application/json
+
+{
+  "nombre": "English Book 1",
+  "nivel": "A1",
+  "tipo": 1,
+  "editorial": "Cambridge",
+  "edicion": "2024"
+}
+
+### Obtener Libro por ID
+GET {{Smartbook_HostAddress}}/api/libros/1
+Authorization: Bearer {{Token}}
+
+### Buscar Libros
+GET {{Smartbook_HostAddress}}/api/libros?nombre=English&nivel=A1&tipo=1
+Authorization: Bearer {{Token}}
+
+### Actualizar Libro (Requiere: Admin)
+PUT {{Smartbook_HostAddress}}/api/libros/1
+Authorization: Bearer {{Token}}
+Content-Type: application/json
+
+{
+  "nombre": "English Book 1 Updated",
+  "nivel": "A1",
+  "tipo": 1,
+  "editorial": "Cambridge",
+  "edicion": "2024"
+}
+
+### ============================================
+### INGRESOS (Requiere: Admin)
+### ============================================
+
+### Crear Ingreso
+POST {{Smartbook_HostAddress}}/api/ingresos
+Authorization: Bearer {{Token}}
+Content-Type: application/json
+
+{
+  "libroId": 1,
+  "unidades": 10,
+  "valorCompra": 50000,
+  "valorVentaPublico": 75000
+}
+
+### Obtener Ingreso por ID
+GET {{Smartbook_HostAddress}}/api/ingresos/1
+Authorization: Bearer {{Token}}
+
+### Buscar Ingresos
+GET {{Smartbook_HostAddress}}/api/ingresos?desde=2024-01-01&hasta=2024-12-31&libroId=1
+Authorization: Bearer {{Token}}
+
+### ============================================
+### VENTAS (Requiere: Autenticación)
+### ============================================
+
+### Crear Venta
+POST {{Smartbook_HostAddress}}/api/ventas
+Authorization: Bearer {{Token}}
+Content-Type: application/json
+
+{
+  "numeroReciboPago": "REC-001",
+  "clienteId": 1,
+  "observaciones": "Venta de prueba",
+  "detalles": [
+    {
+      "libroId": 1,
+      "lote": "2024-001",
+      "unidades": 2
+    }
+  ]
+}
+
+### Obtener Venta por ID
+GET {{Smartbook_HostAddress}}/api/ventas/1
+Authorization: Bearer {{Token}}
+
+### Buscar Ventas
+GET {{Smartbook_HostAddress}}/api/ventas?desde=2024-01-01&hasta=2024-12-31&clienteId=1
+Authorization: Bearer {{Token}}
+
+### ============================================
+### INVENTARIO (Requiere: Autenticación)
+### ============================================
+
+### Obtener Inventario por Lote
+GET {{Smartbook_HostAddress}}/api/inventarios?lote=2024-001
+Authorization: Bearer {{Token}}
+
+### ============================================
+### SWAGGER UI
+### ============================================
+
+### Acceder a Swagger UI
+# Abre en el navegador: {{Smartbook_HostAddress}}/swagger
+
+### ============================================
+### WEATHER FORECAST (Test - No requiere auth)
+### ============================================
+
+GET {{Smartbook_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
